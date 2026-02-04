@@ -1,28 +1,28 @@
-##ESD check :
-#根据IC手册上ESD寄存器的addr,但是实际上include/video/mipi_display.h中已经定义好addr是0x0A;
+#ESD check :
+##根据IC手册上ESD寄存器的addr,但是实际上include/video/mipi_display.h中已经定义好addr是0x0A;
     0x0A (Get Power Mode): 這是 MIPI DCS 標準協議中定義的一個通用寄存器，
     理論上大部分符合標準的面板都應該支持。它返回面板當前的電源狀態（如：是否在 Sleep 模式、顯示是否開啟等）。
-#调用drm_mipi_dsi.c中的mipi_dsi_dcs_get_power_mode，读取ESD寄存器的值；
+##调用drm_mipi_dsi.c中的mipi_dsi_dcs_get_power_mode，读取ESD寄存器的值；
     +	err = mipi_dsi_dcs_get_power_mode(dsi, &value);
-#对比IC手册上ESD寄存器正常的值，决定是否要执行ESD reset；
+##对比IC手册上ESD寄存器正常的值，决定是否要执行ESD reset；
     bool normal = (esd_check_value_read(p) == 0x9c) ? true : false;
 
 
-##ESD reset :
-#1. 軟體層面的狀態強制（DRM 框架）
+#ESD reset :
+##1. 軟體層面的狀態強制（DRM 框架）
     在 esd_mipi_reset 函數中，最核心的代碼是：
     conn->force = DRM_FORCE_OFF;  // 第一步：強制關閉
     ... ... ... 填充模式 ... ... ...
     +	msleep(1000);                 // 等待 1 秒
     +	conn->force = DRM_FORCE_ON;   // 第二步：強制開啟
-#2. 硬體層面的重新初始化（Panel Driver）
+##2. 硬體層面的重新初始化（Panel Driver）
     當上述 DRM_FORCE_ON 執行時，panel-simple.c 會重新執行一遍完整的面板點亮序列：
     拉低 Reset Pin: 給面板 IC 一個硬體復位訊號（如果電路有連 Reset 引腳）。
     重新上電: 透過 GPIO 或 PMIC 重新給 VCC/VGH/VGL 供電。
     發送初始化命令 (Init Sequence): 重新把那幾十條甚至上百條的 MIPI 寄存器配置命令（DCS commands）發給面板。 這一步最關鍵，因為 ESD 導致的寄存器混亂或邏輯死鎖，在硬體復位和重新載入配置後會徹底消失。
 
 
-##時序與計數器的重置:
+#時序與計數器的重置:
     為了保證恢復過程不會死循環，代碼做了細節處理：
     停止檢查: 在重置期間，調用 cancel_delayed_work_sync(&p->esd_check_dw)，防止在重置還沒完成時又觸發新的 ESD 檢測。
     歸零計數: 重置完成後，將 p->esd_num = 0，讓系統從乾淨的狀態重新開始監控。
