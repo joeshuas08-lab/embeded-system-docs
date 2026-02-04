@@ -1,0 +1,47 @@
+# ===== Linux / Editor =====
+*~
+*.swp
+*.swo
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# ===== Build / Output =====
+out/
+build/
+dist/
+tmp/
+.cache/
+*.o
+*.a
+*.so
+*.elf
+*.bin
+*.img
+*.map
+
+# ===== Yocto / Android / RK =====
+*.dtb
+*.dtbo
+*.patch
+*.rej
+.repo/
+ccache/
+dl/
+sstate-cache/
+*.apk
+*.apex
+
+# ===== Large files (optional) =====
+*.pdf
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.xz
+
+# ===== Personal =====
+*.bak
+*.old
