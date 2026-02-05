@@ -1,0 +1,7 @@
+Soc-model,I.MX6UL,I.MX91,I.MX95,I.MX8M Plus
+SOM-model:,MYC-Y6ULX-V2,MYC-LMX91,I.MX95 smarc,MYC-JX8MPQ
+CPU-info:,"NXP i.MX 6UL/i.MX 6ULL, Cortex-A7@528MHz","NXP i.MX 91, Cortex-A55@1.4GHz","NXP i.mx95, 6x Cortex-A55@1.8GHz+1*M33MHz+1*M7@800MHz, 2 TOPS NPU","NXP i.MX 8M Plus, 4x Cortex-A53@1.6GHz +Cortex-M7@800MHz, 2.3 TOPS NPU, 3D GPU"
+Storage:,"256MB/512MB DDR3, 256MB Nand Flash/4GB eMMC","1GB LPDDR4, 8GB eMMC","4GB/8GB LPDDR5, 32GB/64GB eMMC","2GB/4GB LPDDR4, 8GB eMMC"
+Footprint:,140-pin Expansion Interface with LCC Package,218-pin Expansion Interface with LGA Package,SMARC,314-pin MXM 3.0 Gold-finger-edge-card Connector
+Op Temp:,0°C to +70°C Commercial / -40°C to +85°C Industrial,-40°C to +85°C Industrial,-40°C to +85°C Industrial,-40°C to +85°C Industrial
+Os:,Linux ,Linux ,Linux ,"Linux , Ubuntu "

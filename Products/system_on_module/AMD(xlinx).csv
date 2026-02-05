@@ -1,0 +1,7 @@
+Soc-model,XC7Z020,XCZU3EG,XCZU5EV,XC7A100T
+SOM-model:,MYC-C7Z020-V2,MYC-CZU3EG-V3,MYC-CZU5EV,MYC-J7A100T
+CPU-info:,XC7Z020 2*A9@766MHz + Artix 7 FPGA 85K  ,XCZU3EG 4*A53@1.2GHz + 2*R5F@600MHz+ UltraScale+ FPGA 154K ,Xilinx Zynq UltraScale+ XCZU5EV-2SFVC784 MPSoC,Artix-7 
+Storage:,512MB DDR3; 4GB eMMC ,512MB DDR3; 4GB eMMC ,"4GB  SDRAM (64bit, 2400MHz) + 4GB eMMC+ 128MB QSPI Flash",512MB DDR3; 32MB QSPI FLASH 
+Footprint:,"LCC, 180-pin ","B2B, 2*160-pin ",,"MXM, 260-pin "
+Op Temp:,-40～+85℃ industrial,0°C~+70°C / -40°C~+85°C,-40～+85℃ industrial,-40～+85℃ industrial
+Os:,Linux,Linux,Linux,/  (Only PL)
