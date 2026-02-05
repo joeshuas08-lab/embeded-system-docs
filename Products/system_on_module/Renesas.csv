@@ -3,5 +3,5 @@ SOM-model:,MYC-YG2LX,MYC-YT2H
 CPU-info:,"RZ/G2L 2*A55@1.2GHz + 1""M33@200MHz ",RZ/T2H 4*A55@1.2GHz + 2*R52@1.0GHz 
 Storage:,1GB/2GB DDR4; 8GB eMMC ,2GB LPDDR4; 8GB eMMC 
 Footprint:," LCC+LGA, 222-pin ","LCC+LGA, 336-pin "
-Op Temp:, -40°C~+85°C.,-40°C~+85°C
-Os:,"Linux, Ubuntu",Linux
+Op Temp:,-40°C~+85°C Industrial,-40°C~+85°C Industrial
+Os:,Linux/Ubuntu,Linux
