@@ -1,7 +1,7 @@
 Soc-model,STM32MP135,STM32MP151,STM32MP157,STM32MP257
 SOM-model:,MYC-YF13X,MYC-YA151C-T,MYC-YA157C-V3,MYC-LF25X
 CPU-info:,"STM32MP135, Cortex-A7@1.0GHz","STM32MP151,Cortex-A7@650MHz + Cortex-M4@209MHz","STM32MP157, 2x Cortex-A7@650M + Cortex-M4@209MHz, 3D GPU","STM32MP257D, 2x Cortex-A35@1.5G + Cortex-M33@400MHz, 1.35 TOPS NPU, 3D GPU"
-Storage:,"256MB/512MB DDR3L, 256MB Nand Flash/4GB eMMC","256MB/512MB DDR3, 256MB Nand Flash/4GB eMC","512MB DDR3, 4GB eMMC","1GB/2GB LPDDR4, 8GB eMMC"
+Storage:,"256MB/512MB DDR3L, 256MB Nand Flash/4GB eMMC","256MB/512MB DDR3, 256MB Nand Flash/4GB eMMC","512MB DDR3, 4GB eMMC","1GB/2GB LPDDR4, 8GB eMMC"
 Footprint:,148-pin Expansion Interface with LCC Package,148-pin Expansion Interface with LCC Package,164-pin Expansion Interface with LCC Package,252-pin Expansion Interface with LGA Package
 Op Temp:,-40°C~+85°C Industrial,0°C~+70°C / -40°C~+85°C,0°C~+70°C / -40°C~+85°C,-40°C~+85°C Industrial
 Os:,Linux,Linux,Linux/Ubuntu,Linux/Debian
