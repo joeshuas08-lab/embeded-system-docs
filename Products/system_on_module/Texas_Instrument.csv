@@ -1,7 +1,0 @@
-Soc-model,AM62L,AM62X
-SOM-model:,MYC-YM62LX,MYC-YM62X
-CPU-info:,AM62L 2*A53@1.25GHz ,AM62x 1/2/4*A53@1.4GHz + 1*M4F@400MHz 
-Storage:,"512MB/1GB DDR4, 512MB QSPI NAND or 8GB eMMC","1GB/2GB DDR4, 8GB eMMC "
-Footprint:,"LCC, 164-pin ","LCC+LGA, 222-pin "
-Op Temp:,-40°C~+85°C Industrial,-40°C~+85°C Industrial
-Os:,Linux,Linux/Debian
