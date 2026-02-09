@@ -4,4 +4,4 @@ CPU-info:,"STM32MP135, 1*A7@1.0GHz","STM32MP151, 1*A7@650MHz + 1*M4@209MHz","STM
 Storage:,"256MB/512MB DDR3L, 256MB Nand Flash/4GB eMMC","256MB/512MB DDR3, 256MB Nand Flash/4GB eMMC","512MB DDR3, 4GB/8GB eMMC","1GB LPDDR4, 8GB eMMC"
 Footprint:,"LCC, 148-pin","LCC, 148-pin","LCC, 164-pin","LGA , 252-pin"
 Op Temp:,-40~+85°C Industrial,0~+70°C Commercial/ -40~+85°C Industrial,0~+70°C Commercial/ -40~+85°C Industrial,-40~+85°C Industrial
-Os:,Linux,Linux,Linux/Ubuntu,Linux
+Os:,Linux,Linux,Linux,Linux

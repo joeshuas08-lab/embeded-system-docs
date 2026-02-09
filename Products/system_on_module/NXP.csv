@@ -1,7 +1,7 @@
 Soc-model,I.MX6UL,I.MX91,I.MX95,I.MX8M Plus
 SOM-model:,MYC-Y6ULX-V2,MYC-LMX91,MYC-JMX95X,MYC-JX8MPQ
-CPU-info:,"NXP i.MX 6UL/i.MX 6ULL, 1*A7@528MHz","NXP i.MX 91, 1*A55@1.4GHz","NXP i.MX 95, 6*A55@1.8GHz+1*M33@333MHz+1*M7@800MHz, 2 TOPS NPU","NXP i.MX 8M PLUS, 4*A53@1.6GHz + 1*M7@800MHz, 2.3 TOPS NPU, 3D GPU"
+CPU-info:,"NXP i.MX 6UL/i.MX 6ULL, 1*A7@528MHz","NXP i.MX 91, 1*A55@1.4GHz","NXP i.MX 95, 6*A55@1.8GHz + 1*M33@333MHz + 1*M7@800MHz, 2 TOPS NPU","NXP i.MX 8M PLUS, 4*A53@1.6GHz + 1*M7@800MHz, 2.3 TOPS NPU, 3D GPU"
 Storage:,"256MB/512MB DDR3, 256MB Nand Flash/4GB eMMC","1GB LPDDR4, 8GB eMMC","4GB/8GB LPDDR5, 32GB/64GB eMMC","2GB/4GB LPDDR4, 8GB eMMC"
 Footprint:,"LCC, 140-pin","LGA, 218-pin",SMARC,"MXM, 314-pin"
-Op Temp:,0~+70°C Commercial/ -40~+85°C Industrial,-40~+85°C Industrial,-40~+85°C Industrial,-40~+85°C Industrial
+Op Temp:,0~+70℃ Commercial/ -40~+85℃ Industrial,-40~+85℃ Industrial,-40~+85℃ Industrial,-40~+85℃ Industrial
 Os:,Linux ,Linux ,Linux ,Linux
