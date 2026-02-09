@@ -1,7 +1,7 @@
 Soc-model,STM32MP135,STM32MP151,STM32MP157,STM32MP257F
 SOM-model:,MYC-YF13X,MYC-YA15XC-T,MYC-YA157C-V3,MYC-LF25X
-CPU-info:,"STM32MP135, Cortex-A7@1.0GHz","STM32MP151,Cortex-A7@650MHz + Cortex-M4@209MHz","STM32MP157, 2x Cortex-A7@650M + Cortex-M4@209MHz, 3D GPU","STM32MP257F, 2x Cortex-A35@1.5G + Cortex-M33@400MHz, 1.35 TOPS NPU, 3D GPU"
+CPU-info:,"STM32MP135, 1*A7@1.0GHz","STM32MP151, 1*A7@650MHz + 1*M4@209MHz","STM32MP157, 2*A7@650M + 1*M4@209MHz, 3D GPU","STM32MP257F, 2*A35@1.5G + 1*M33@400MHz, 1.35 TOPS NPU, 3D GPU"
 Storage:,"256MB/512MB DDR3L, 256MB Nand Flash/4GB eMMC","256MB/512MB DDR3, 256MB Nand Flash/4GB eMMC","512MB DDR3, 4GB/8GB eMMC","1GB LPDDR4, 8GB eMMC"
 Footprint:,"LCC, 148-pin","LCC, 148-pin","LCC, 164-pin","LGA , 252-pin"
-Op Temp:,-40°C~+85°C Industrial,0°C~+70°C / -40°C~+85°C,0°C~+70°C / -40°C~+85°C,-40°C~+85°C Industrial
+Op Temp:,-40~+85°C Industrial,0~+70°C Commercial/ -40~+85°C Industrial,0~+70°C Commercial/ -40~+85°C Industrial,-40~+85°C Industrial
 Os:,Linux,Linux,Linux/Ubuntu,Linux
