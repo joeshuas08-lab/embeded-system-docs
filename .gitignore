@@ -47,3 +47,4 @@ sstate-cache/
 *.bak
 *.old
 .obsidian/
+.obsidian/*
