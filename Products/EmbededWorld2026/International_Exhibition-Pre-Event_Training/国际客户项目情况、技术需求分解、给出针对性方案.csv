@@ -1,0 +1,31 @@
+日期,时间,客户公司,参加人员/职位,客户行业,国家,意向/下单产品,"是否发送
+邀请链接",业务员,备注（项目情况）,,,
+10-Mar,11:00-12:00,Matrix Electrónica,Rubén Rodríguez Fernández/Field Application Engineer,代理商-为物联网通信、云软件、出租车设备以及电子设备和组件提供系统和解决方案,西班牙,,是,张梅,目前代理的客户ETRA已经进入生产阶段，在我们工厂OEM/ODM，layout已评审完，待提供新的工艺文件以proceed；  带过去connector公母座样品6个，工厂和客户进行手动插拔测试100次（不计拉力）in parallel,,,
+,13:30-14:30,SOS,Jozef Jarábek-Head of Purchasing department,代理商,斯洛伐克,,是,王晶,,,,
+,15:00-15:30,tForge Ingenieurburo GmbH,Dr. Robert Fischer,解决方案设计和硬件制造商,德国,,是,王晶,,,,
+,16:00-16:30,"
+Martin Glueck",Martin Glueck,工业缝纫机开发新的人机界面 (HMI),奥地利,MYC-YR3506B-8E512D-150-C,是,王晶,正在寻找一个高性能，高性价比的方案能够涵盖4英寸-12英寸的产品。1月份曾提供报价和技术资料供客户评估，目前尚在评估,,,
+11-Mar,9:15-10:00,Glyn,Christoph Tenbergen-Product Manager/Daniel-FAE/department head ,代理商,德国,,是,王晶,,,,
+,11:00-12:00,MC Technologies GmbH,Sascha Dikhoff-Projektmanager R&D,MC Technologies 设计、开发并制造其完整的硬件和软件解决方案，用于通过移动通信（M2M/IoT）传输工业数据——工业路由器、数据终端和网关，,德国,,是,王晶,"项目应用：工业控制器，生产：计划于 2026 年第二季度；总产量约为 20,000 台需求求涵盖两个核心平台：
+
+平台 A（20,000 台）：目前正在评估两种方案：
+
+方案 1：采用MYIR  i.MX91 SOM)进行现有分立式 i.MX91 设计的全套交钥匙 EMS 生产。
+
+方案 2：采用 MYIR  i.MX91 系SOM。。
+
+平台 B（20,000 台）：基于 i.MX6 ULL 的现有分立式设计。正在寻找可靠的 EMS 合作伙伴，以提供全套交钥匙生产服务",,,
+,下午待定,Visage Technologies,Sales Manager - AI Labs,专注于开发定制化的边缘人工智能解决方案，针对高精度和低延迟进行了优化，并提供从开发到部署的全面支持。,瑞典,,否,郑玉,,,,
+,16::00-17:00,GSR,"意大利GSR：Daniel-PM 法国总部eukleed 
+Jasmine Liao-Asia Sourcing/  
+Regis du Manoir-Président",代理商,意大利/法国,,是,王晶,,,,
+,,,,,,,,,,,,
+12-Mar,10:00-10:30,"JBC Soldering, S.L.",Josep Lligadas Sorribas-Electronic Lab Coordinator Electronic Lab Coordinator-Purchasing engineer,焊台,西班牙,MYC-YA157C-V3-4E512D-65-C,是,王晶,已经用157打板，但是由于157的启动时间较慢，达不到客户的需求，客户可能考虑更换STM32MP257。 2026 年第二季度发布整合量产版本。量产版本需要满足更严格的要求，包括 5-6 秒的启动时间。,,,
+,11:00-11:30,Movaria GmbH,Jakob Karbaumer / Co-Founder CTO,汽车人机交互界面,德国,MYC-YR3562J-16E2D-180-I ,是,王晶,"客户已经购买核心板和开发板样品，目前正在设计硬件。原型机：预计2026年2月份之前
+批量：2026年第三季度
+年用量：初期1K，",257有gpu，用的是drm的wayland显示框架； 157没有gpu，用的是frame buffer显示框架（之前到屏幕显示用了）；,  但因为CRA，ST加入了tf-a和optee这两安全组件，他们在uboot之前启动所以到uboot估计才能做到4~5s；  而在flutter engine显示应该超过7s但是会比157耗时更短；（是否考虑在uboot安插一张图片）,"0s  PWRON
+1s  Bootloader
+3s  Kernel ready
+4s  DRM framebuffer
+5s  Flutter engine
+6~7s UI ready"
