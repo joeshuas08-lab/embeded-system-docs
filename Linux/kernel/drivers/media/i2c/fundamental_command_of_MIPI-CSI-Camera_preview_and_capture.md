@@ -21,7 +21,7 @@ ls -l /sys/class/video4linux/* | grep rkisp-vir0
 ls -l /sys/class/video4linux/* | grep rkcif-mipi-lvds1
 得到节点是video11
 ```
-
+（/sys/class/video4linux这个路径百试百灵）
 ## 1.3 确认格式
 ```
  v4l2-ctl -d /dev/video0 --list-formats-ext 
