@@ -48,3 +48,4 @@ sstate-cache/
 *.old
 .obsidian/
 .obsidian/*
+.trash/*
