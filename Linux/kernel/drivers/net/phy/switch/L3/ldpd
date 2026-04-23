@@ -1,0 +1,21 @@
+#introduction简介
+LDPD = Label Distribution Protocol Daemon
+
+##它是 MPLS 的核心服务，用来：
+分发 MPLS 标签（Label）
+建立 LSP（Label Switched Path）
+
+##简单说：
+LDPD = MPLS 网络的“标签分发引擎”
+
+
+#什么时候必须停 LDPD？
+
+如果你的交换机 / 路由器：
+❌ 没有启用 MPLS
+❌ 没有使用 LDP
+❌ 只是二层交换机
+❌ 没有跑 BGP/MPLS VPN
+❌ 没有运营商级网络需求
+
+## 那 LDPD 就是“多余服务”
