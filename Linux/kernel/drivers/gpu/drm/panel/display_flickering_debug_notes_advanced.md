@@ -1,5 +1,8 @@
 # RK3576 MIPI DSI 显示闪屏问题深度分析与解决
 
+## 官方文档📄：
+![](flickering_troubleshoot.png)
+![](flickering_troubleshoot1%201.png)
 ## 执行摘要
 
 **问题**：RK3576平台MIPI DSI显示屏在运行阶段出现间歇性轻微闪屏，表现为不规则亮度变化和像素不稳定。
