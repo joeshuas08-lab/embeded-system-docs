@@ -161,3 +161,147 @@ U-Boot → 加载 FIT Image (LZ4 内核 + ZSTD squashfs)
 **日期**: 2026-05-28
 **平台**: Rockchip RK3562 (MYD-YR3562)
 **内核版本**: Linux 6.1
+
+---
+
+## 实施结果 (2026-06-01)
+
+### 最终启动时间
+
+| 里程碑 | 上电时间 | 内核时间 |
+|--------|---------|---------|
+| DDR | 1.5s | — |
+| U-Boot SPL | 2.9s | — |
+| 内核启动 | 4.2s | 0s |
+| Booting Linux | 4.4s | 2.70s |
+| disp_init (LVGL) | ~5.2s | ~3.5s |
+| LVGL 出画面 | **~5s** | **~3.5s** |
+| Run /sbin/init | 8.1s | 5.25s |
+
+**上电到 LVGL 出画面: ~5 秒**
+
+### 内核配置: 489 行 (BSP: 699 行, -30%)
+
+### 可复现的修复补丁
+
+#### 1. 显示修复 — MIPI DTS 配置
+
+**文件**: `kernel-6.1/arch/arm64/boot/dts/rockchip/myd-yr3562-mipi101c.dtsi`
+
+DTS 使用 Android BSP 版本 (来自 `\\192.168.1.117\loh_media\rockchip\yr3562-android14\kernel-6.1\arch\arm64\boot\dts\rockchip\myd-yr3562-mipi101c.dtsi`), 关键属性:
+```dts
+dsi_panel: panel@0 {
+    compatible = "simple-panel-dsi";
+    backlight = <&backlight>;
+    bpc = <8>;                           // 必须: bits per color
+    bus-format = <0x1017>;               // 必须: MEDIA_BUS_FMT_RGB888_1X24
+    dsi,flags = <(MIPI_DSI_MODE_VIDEO |  // 必须: VIDEO_BURST (非 SYNC_PULSE)
+                  MIPI_DSI_MODE_VIDEO_BURST |
+                  MIPI_DSI_MODE_LPM |
+                  MIPI_DSI_MODE_NO_EOT_PACKET)>;
+    dsi,format = <MIPI_DSI_FMT_RGB888>;
+    dsi,lanes = <4>;
+    panel-init-sequence = [
+        23 00 02 B0 5A
+        23 00 02 B1 00
+        23 00 02 89 01
+        23 00 02 2C 28
+        23 00 02 00 F1
+        05 78 01 11     // sleep_out, 120ms
+        05 14 01 29     // display_on, 20ms
+    ];
+    ...
+};
+pwms = <&pwm3 0 2000 0>;  // PWM period 2000ns (Android BSP 值, 非 25000ns)
+```
+**文件**: `kernel-6.1/arch/arm64/boot/dts/rockchip/myd-yr3562.dts`
+```dts
+#include "myd-yr3562-mipi101c.dtsi"     // 必须取消注释
+// #include "myd-yr3562-lt8912-hdmi.dtsi" // HDMI 与 MIPI 互斥
+```
+**注意**: RK618 驱动不需要 — Android BSP 有但实际未使用。
+
+#### 2. Recovery 自动重启修复
+
+**根因**: `buildroot/configs/rockchip/base/recovery.config` 强制启用 `BR2_PACKAGE_RECOVERY=y`, 且 `S40recovery` init 脚本调用 `/usr/bin/recovery &` 触发重启。
+
+**修复**:
+```bash
+# kernel-6.1/arch/arm64/configs/myd_yr3562_tb_defconfig (已禁用 8250DW)
+# CONFIG_SERIAL_8250_DW is not set
+
+# buildroot/configs/myd_yr3562_tb_defconfig
+# BR2_PACKAGE_RECOVERY is not set
+```
+
+**文件**: `buildroot/board/rockchip/rk3506/post-build-fast-display.sh`  
+在 post-build 中额外删除 recovery 脚本:
+```bash
+rm -f $TARGET/etc/init.d/S99lunch_recovery
+rm -f $TARGET/etc/init.d/S15linkmount_recovery
+rm -f $TARGET/usr/bin/RkLunch.sh
+```
+**注意**: 必须 `rm -rf buildroot/output/myd_yr3562_tb` clean rebuild, 否则旧 `S40recovery` 残留。
+
+#### 3. LVGL 自动启动 (pre_init)
+
+**文件**: `buildroot/board/rockchip/rk3506/fast-display-overlay/etc/init.d/S10lv_demo`
+```sh
+start() {
+    # Wait for DRM to be ready (最多 3s)
+    for i in $(seq 1 30); do
+        if [ -e /sys/class/drm/card0-DSI-1/enabled ] && \
+           [ "$(cat /sys/class/drm/card0-DSI-1/enabled)" = "enabled" ]; then
+            break
+        fi
+        sleep 0.1
+    done
+    ulimit -n 1024
+    rk_demo &    # 注意: 不要设置 LV_DRIVERS_SET_PLANE=CURSOR!
+    sleep 1
+}
+```
+
+**文件**: `buildroot/board/rockchip/rk3506/post-build-fast-display.sh` 末尾:
+```bash
+chmod +x $TARGET/etc/init.d/pre_init/S* 2>/dev/null || true
+```
+
+#### 4. 内核编译修复
+
+**SAMSUNG_DCPHY 编译失败** (MEDIA_SUPPORT not set):
+```diff
+- CONFIG_PHY_ROCKCHIP_SAMSUNG_DCPHY=y
++ # CONFIG_PHY_ROCKCHIP_SAMSUNG_DCPHY is not set
+```
+
+**Mali GPU 编译失败** (PM_DEVFREQ not set → MALI_DEVFREQ 被丢弃):
+```diff
++ CONFIG_PM_DEVFREQ=y
+```
+
+**内核 panic** (8250DW 与 FIQ debugger 抢 UART0):
+```diff
+- CONFIG_SERIAL_8250_DW=y
++ # CONFIG_SERIAL_8250_DW is not set
+```
+
+#### 5. Deferred probe 消除
+
+禁用 SOUND/PCIe/ATA 及相关 PHY:
+```diff
+- CONFIG_SOUND=y ... (28行)
++ # CONFIG_SOUND is not set
+- CONFIG_PCI=y ... (6行)
++ # CONFIG_PCI is not set
+- CONFIG_ATA=y ... (5行)
++ # CONFIG_ATA is not set
+```
+效果: kernel deferred probe 从 ~10s → 0
+
+### 仓库分支状态
+
+全部在 `myd-fast-boot` 分支, 已 commit:
+- kernel-6.1: `4d08f02e59f1` (6 commits)
+- buildroot: `a0ffbadd24` (5 commits)
+- device/rockchip: `89738bc` (1 commit)
