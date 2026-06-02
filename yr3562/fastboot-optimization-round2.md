@@ -154,3 +154,56 @@ rm -f $TARGET/etc/init.d/S30MEasyListen-DEV
 | buildroot | myd-fast-boot | `83e5cc` (11 services removed) |
 | device/rockchip | myd-fast-boot | `d58e29c` (SPL restored) |
 | rkbin | — | RK3562TRUST.ini BL32 SEC=0 |
+
+---
+
+## 复现步骤
+
+### 环境
+
+```bash
+cd /home/joes/work/rk/rk3562J/MYD-YR3562
+```
+
+### 1. 切分支
+
+```bash
+git -C kernel-6.1 checkout myd-fast-boot
+git -C buildroot checkout myd-fast-boot  
+git -C device/rockchip checkout myd-fast-boot
+# u-boot: detached HEAD, already at b573b73e6f
+```
+
+### 2. 修改 rkbin (去 OPTEE)
+
+```bash
+# 编辑 rkbin/RKTRUST/RK3562TRUST.ini
+# [BL32_OPTION] SEC=1 → SEC=0
+```
+
+### 3. 编译
+
+```bash
+./build.sh device/rockchip/.chips/myir_yr3562/myd_yr3562_tb_defconfig
+./build.sh          # 全量编译
+```
+
+### 4. 测试
+
+```bash
+# 串口连 RK3562J(192.168.1.188) /dev/ttyACM0
+# 启动后确认: LVGL demo starting/ready, disp_init 1200x1920, 无 OPTEE 输出
+```
+
+### 验证命令
+
+```bash
+# 确认 OPTEE 已移除
+dmesg | grep -c OP-TEE    # 应为 0
+
+# 确认 BT/WiFi 已禁用  
+dmesg | grep -ic bluetooth # 应为 0
+
+# 确认 LVGL 运行
+ps | grep rk_demo
+```
