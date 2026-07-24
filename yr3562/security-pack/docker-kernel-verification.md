@@ -51,3 +51,38 @@
 ### Branch creation rule
 - ALWAYS based on myd: `git branch arm-binary-verification myd`
 - Hook enforced: blocks git checkout -b / repo start unless from myd
+
+## 2026-07-24 Update: Full Verification Round
+
+### Verified on Target
+| Item | Result | Method |
+|------|--------|--------|
+| Docker daemon 27.5.1 | ✅ | static binary, overlay2 driver |
+| cyclictest | ✅ | Max 23µs (no PREEMPT_RT) |
+| 32-bit ARM binary | ✅ | base64 decode + execute, exit:0 |
+| iptables | ✅ | factory rootfs, Docker chains active |
+| telnet | ✅ | /usr/bin/telnet in factory rootfs |
+
+### Buildroot Config (verified in .config, pending rootfs flash)
+| Item | Config |
+|------|--------|
+| BR2_INIT_SYSTEMD | =y |
+| BR2_PACKAGE_LIBOPENSSL | =y (with OPENSSL_BIN) |
+| BR2_PACKAGE_IPTABLES | =y |
+| BR2_PACKAGE_LINUX_PAM | =y |
+| BR2_PACKAGE_SUDO | =y |
+| BR2_PACKAGE_NTP | =y |
+| BR2_PACKAGE_BUSYBOX_TELNETD | =y |
+| BR2_PACKAGE_DOCKER_COMPOSE | =y |
+
+### Pending
+- PREEMPT_RT: NOT in factory config, needs RT patch
+- docker-compose: binary download blocked (no internet on target/bridge)
+- Full rootfs flash: clean rebuild needed, incremental build cached old rootfs
+
+### Key Learnings
+1. `merge_config.sh` preserves Rockchip configs; `olddefconfig` drops them
+2. SDK mc-fitimage.sh produces correctly signed FIT (signature node required)
+3. Flash via `upgrade_tool WL <LBA>` NOT `dd` to GPT partition
+4. A/B slots: must flash BOTH mmcblk0p3 AND mmcblk0p5
+5. Buildroot config goes to `rockchip_myd_yr3562_br_defconfig` (SDK path)
