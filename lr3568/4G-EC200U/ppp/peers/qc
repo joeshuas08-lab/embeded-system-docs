@@ -1,0 +1,6 @@
+connect '/usr/sbin/chat -v -f /etc/ppp/chat/qc'
+/dev/ttyUSB0
+115200
+noipdefault
+usepeerdns
+defaultroute

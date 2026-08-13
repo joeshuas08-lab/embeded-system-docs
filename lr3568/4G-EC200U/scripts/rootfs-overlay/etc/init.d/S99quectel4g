@@ -1,0 +1,24 @@
+#!/bin/sh
+# S99quectel4g - auto PPP dial at boot (rootfs overlay: /etc/init.d/S99quectel4g)
+# Copy ppp/chat/qc and ppp/peers/qc to /etc/ppp/... on the target (or overlay).
+
+case "$1" in
+  start)
+    sleep 15  # wait for module enumeration
+    mkdir -p /var/run/pppd/lock
+    nohup pppd call qc >/tmp/ppp.log 2>&1 &
+    ;;
+  stop)
+    killall pppd 2>/dev/null
+    ;;
+  restart)
+    killall pppd 2>/dev/null
+    sleep 1
+    $0 start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+    ;;
+esac
+exit 0
