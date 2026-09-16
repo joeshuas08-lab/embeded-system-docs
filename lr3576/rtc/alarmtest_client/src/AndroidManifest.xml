@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.myir.alarmtest">
+    <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="34"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <application android:label="AlarmTest">
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- FIRE needs an intent-filter: AlarmSetReceiver sets the alarm via
+             an implicit broadcast (action + setPackage), so without this the
+             posted alarm finds no receiver and fired.txt is never written. -->
+        <receiver android:name=".AlarmReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="com.myir.alarmtest.FIRE"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".AlarmSetReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="com.myir.alarmtest.SET"/>
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>
