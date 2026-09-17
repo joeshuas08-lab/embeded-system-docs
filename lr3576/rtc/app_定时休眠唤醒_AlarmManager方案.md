@@ -1,9 +1,10 @@
 # App 定时休眠唤醒方案（AlarmManager 标准路径）— LR3576/RK3576
 
-**日期**: 2026-09-09（2026-09-16 更新：整点唤醒消除 + RTC 补偿，语义修订）
-**状态**: 已验证（49 轮 5min 循环 + 1h 跨整点 + 变时长，全部通过）
+日期：2026-09-09（2026-09-17 更新：整点唤醒消除、RTC 补偿、静止节流固化）
+状态：已验证（49 轮 5min 循环、1h 跨整点乘 4、15min 乘 3、开机场景乘 2，全部通过）
 
-> **2026-09-16 重要修订**：唤醒精度语义已改变 —— **绝不早醒，最多晚 ~1 分钟**（此前是"分钟截断可提前 ≤59s"）。客户 app 无需改动，但验收标准请按新语义。
+2026-09-16 起唤醒精度语义修订：不早醒，最多晚 1 分钟左右（此前是"分钟截断可提前
+≤59s"）。客户 app 无需改动，验收标准按新语义执行。
 
 ## 产品需求
 
@@ -129,8 +130,8 @@ echo mem > /sys/power/state
 
 ## 遗留
 
-- **产品固化项**（当前为运行时操作，需进固件）：
-  1. `pm disable-user --user 0 com.android.providers.calendar`（或 PRODUCT_PACKAGES 移除）
-  2. `settings put global location_enable_stationary_throttle 0`（或 SettingsProvider overlay）
-  3. health HAL 新二进制编译进固件（`m android.hardware.health-service.rockchip` 产物刷 vendor）
+- 产品固化项：
+  1. `pm disable-user --user 0 com.android.providers.calendar`（或 PRODUCT_PACKAGES 移除）—— 待固化
+  2. `location_enable_stationary_throttle=0` —— 已固化（commit `272007d2033`，SettingsProvider 默认值加 DatabaseHelper 写入；开机约 10 分钟的 Doze 静止检测唤醒随之消除）
+  3. health HAL 新二进制 —— 已在整包中
 - CRY（acoustic_pocket）运行中验证通过，无需特殊处理
