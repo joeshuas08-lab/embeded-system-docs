@@ -130,8 +130,8 @@ echo mem > /sys/power/state
 
 ## 遗留
 
-- 产品固化项：
-  1. `pm disable-user --user 0 com.android.providers.calendar`（或 PRODUCT_PACKAGES 移除）—— 待固化
+- 产品固化项（已全部完成）：
+  1. 日历 provider —— 已从构建移除（rk3576_u.mk filter-out CalendarProvider，不再需要 pm disable-user）
   2. `location_enable_stationary_throttle=0` —— 已固化（commit `272007d2033`，SettingsProvider 默认值加 DatabaseHelper 写入；开机约 10 分钟的 Doze 静止检测唤醒随之消除）
   3. health HAL 新二进制 —— 已在整包中
 - CRY（acoustic_pocket）运行中验证通过，无需特殊处理
