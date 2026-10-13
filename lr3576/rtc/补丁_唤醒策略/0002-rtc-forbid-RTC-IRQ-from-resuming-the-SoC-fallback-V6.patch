@@ -1,0 +1,60 @@
+From cc7e8a02cb7960f448cfc6f8236caf4e5b3a7455 Mon Sep 17 00:00:00 2001
+From: joeshua <joeshuas.shao@myir.cn>
+Date: Tue, 13 Oct 2026 15:51:14 +0800
+Subject: [PATCH 2/2] rtc: forbid RTC IRQ from resuming the SoC (fallback) [V6
+ board]
+
+Final fallback for the no-timed-wakeup policy.  The previous commit (alarm: only allowlisted packages may arm wakeup alarms) removes every non-allowlisted wakeup source at the AlarmManager level; this one additionally takes the RTC IRQ itself out of the wakeup path, so no alarm of any origin can resume the SoC.  Suspend is only exited by user hardware (power key, charger); due alarms are serviced on the next wake.  Timekeeping and alarm programming are untouched.
+
+Driven by DT property myir,disable-alarm-wakeup (myd-lr3576.dts); remove the property and rebuild the kernel to restore RTC-alarm wakeups.  Only touches the kernel + DTS, so switching to/from this fallback is a boot.img swap.
+---
+ .../arch/arm64/boot/dts/rockchip/myd-lr3576.dts     |  8 ++++++++
+ kernel-6.1/drivers/rtc/rtc-hym8563.c                | 13 +++++++++++--
+ 2 files changed, 19 insertions(+), 2 deletions(-)
+
+diff --git a/kernel-6.1/arch/arm64/boot/dts/rockchip/myd-lr3576.dts b/kernel-6.1/arch/arm64/boot/dts/rockchip/myd-lr3576.dts
+index 699aec4d666..76a703b5d44 100755
+--- a/kernel-6.1/arch/arm64/boot/dts/rockchip/myd-lr3576.dts
++++ b/kernel-6.1/arch/arm64/boot/dts/rockchip/myd-lr3576.dts
+@@ -167,6 +167,14 @@ rtc: hym8563@51 {
+ 		 */
+ 		interrupts = <RK_PC5 IRQ_TYPE_EDGE_FALLING>;
+ 		wakeup-source;
++		/*
++		 * Fallback (last commit): forbid the RTC IRQ from resuming the
++		 * SoC altogether - no timed alarm can wake the device; suspend
++		 * is only exited by the power key / charger.  Paired with the
++		 * driver gate "myir,disable-alarm-wakeup" (rtc-hym8563.c).
++		 * Remove this property to restore RTC-alarm wakeups.
++		 */
++		myir,disable-alarm-wakeup;
+ 	};
+ };
+ 
+diff --git a/kernel-6.1/drivers/rtc/rtc-hym8563.c b/kernel-6.1/drivers/rtc/rtc-hym8563.c
+index 2da39787455..0ee8a8e6397 100644
+--- a/kernel-6.1/drivers/rtc/rtc-hym8563.c
++++ b/kernel-6.1/drivers/rtc/rtc-hym8563.c
+@@ -654,8 +654,17 @@ static int hym8563_probe(struct i2c_client *client)
+ 		}
+ 	}
+ 
+-	if (client->irq > 0 ||
+-	    device_property_read_bool(&client->dev, "wakeup-source")) {
++	/*
++	 * V6 board fallback: forbid the RTC IRQ from resuming the SoC.
++	 * With "myir,disable-alarm-wakeup" in the DT node the alarm path
++	 * stays fully functional (alarms are still programmed, timekeeping
++	 * unaffected), but the RTC IRQ is not armed as a wakeup source, so
++	 * a due alarm is serviced on the next wake instead of resuming the
++	 * system.  Remove the DT property to restore RTC-alarm wakeups.
++	 */
++	if (!device_property_read_bool(&client->dev, "myir,disable-alarm-wakeup") &&
++	    (client->irq > 0 ||
++	     device_property_read_bool(&client->dev, "wakeup-source"))) {
+ 		device_init_wakeup(&client->dev, true);
+ 	}
+ 
+-- 
+2.50.1
+

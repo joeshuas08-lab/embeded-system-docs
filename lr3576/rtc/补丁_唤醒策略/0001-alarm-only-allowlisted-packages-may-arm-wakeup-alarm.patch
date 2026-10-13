@@ -1,0 +1,81 @@
+From 09a0e61f11184c96313f1edcaf5d0704dbd23bad Mon Sep 17 00:00:00 2001
+From: joeshua <joeshuas.shao@myir.cn>
+Date: Tue, 13 Oct 2026 15:36:57 +0800
+Subject: [PATCH 1/2] alarm: only allowlisted packages may arm wakeup alarms
+ [V6 board]
+
+Product policy: suspend must only be exited by the product app's alarms (or by user hardware - power key / charger). All wakeup alarms are programmed onto the RTC through the kernel alarmtimer and resume the SoC, so the system's own periodic wakeups (JobScheduler deadlines, DeviceIdle maintenance, stats/metrics timers, other apps) kept pulling the device out of sleep.
+
+Non-allowlisted RTC_WAKEUP / ELAPSED_REALTIME_WAKEUP alarms are demoted to their non-wakeup counterpart at set time. Per the JNI clockid table (android_alarm_to_clockid) those use plain CLOCK_REALTIME / CLOCK_BOOTTIME timers which cannot resume the system from suspend; they fire late, on the next wake.
+
+Allowlist: comma separated package names in persist.sys.wakeup_allowlist, default com.cry.acoustic_pocket. Empty value disables the policy.
+---
+ .../server/alarm/AlarmManagerService.java     | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+diff --git a/frameworks/base/apex/jobscheduler/service/java/com/android/server/alarm/AlarmManagerService.java b/frameworks/base/apex/jobscheduler/service/java/com/android/server/alarm/AlarmManagerService.java
+index 1fde2df96ee..eeee44eddbb 100644
+--- a/frameworks/base/apex/jobscheduler/service/java/com/android/server/alarm/AlarmManagerService.java
++++ b/frameworks/base/apex/jobscheduler/service/java/com/android/server/alarm/AlarmManagerService.java
+@@ -2414,6 +2414,28 @@ public class AlarmManagerService extends SystemService {
+         }
+     }
+ 
++    //------myir-code---------------------------------
++    private static final String MYIR_WAKEUP_ALLOWLIST_PROP = "persist.sys.wakeup_allowlist";
++    private static final String MYIR_WAKEUP_ALLOWLIST_DEFAULT = "com.cry.acoustic_pocket";
++
++    private static boolean isMyirWakeupAllowed(String pkg) {
++        final String list = SystemProperties.get(MYIR_WAKEUP_ALLOWLIST_PROP,
++                MYIR_WAKEUP_ALLOWLIST_DEFAULT).trim();
++        if (list.isEmpty()) {
++            return true;
++        }
++        if (pkg == null) {
++            return false;
++        }
++        for (String allow : list.split(",")) {
++            if (pkg.equals(allow.trim())) {
++                return true;
++            }
++        }
++        return false;
++    }
++    //------------------------------------------------
++
+     @GuardedBy("mLock")
+     private void setImplLocked(int type, long when, long whenElapsed, long windowLength,
+             long interval, PendingIntent operation, IAlarmListener directReceiver,
+@@ -2439,6 +2461,29 @@ public class AlarmManagerService extends SystemService {
+         }
+         //----------------------------------------------
+ 
++        //------myir-code---------------------------------
++        /*
++         * MYIR V6 board policy: only allowlisted packages may arm wakeup
++         * alarms.  Every wakeup alarm is handed to the kernel alarmtimer and
++         * programmed into the RTC, which resumes the SoC; system wakeups
++         * (JobScheduler deadlines, DeviceIdle maintenance, stats/metrics
++         * timers, ...) would otherwise keep pulling the device out of
++         * suspend.  Non-allowlisted wakeup alarms are demoted to their
++         * non-wakeup counterpart: they still fire (serviced after the next
++         * wake) but cannot resume the system.  Power key / charger wakeups
++         * are not alarm based and stay untouched.  Allowlist: comma
++         * separated package names in persist.sys.wakeup_allowlist; an empty
++         * value disables the policy.
++         */
++        if ((type == RTC_WAKEUP || type == ELAPSED_REALTIME_WAKEUP)
++                && !isMyirWakeupAllowed(callingPackage)) {
++            final int demoted = (type == RTC_WAKEUP) ? RTC : ELAPSED_REALTIME;
++            Slog.i(TAG, "myir: demote wakeup alarm, package=" + callingPackage
++                    + " type=" + type + " -> " + demoted);
++            type = demoted;
++        }
++        //------------------------------------------------
++
+         final Alarm a = new Alarm(type, when, whenElapsed, windowLength, interval,
+                 operation, directReceiver, listenerTag, workSource, flags, alarmClock,
+                 callingUid, callingPackage, idleOptions, exactAllowReason);
+-- 
+2.50.1
+
